@@ -151,6 +151,20 @@ class Custom_Admin {
 new Custom_Admin();
 
 
+// Hide users from seeing your account ( good to hide admin )* Hide more than one user account from the user list
+
+add_action('pre_user_query','site_pre_user_query');
+function site_pre_user_query($user_search) {
+global $wpdb;
+$excluded_usernames = array('hidden user1', 'hidden user2');
+if(!in_array($user_search->query_vars['username'], $excluded_usernames))
+{
+$user_search->query_where = str_replace('WHERE 1=1', "WHERE 1=1 AND {$wpdb->users}.user_login NOT IN ('" . implode("','", $excluded_usernames) . "')", $user_search->query_where);
+}
+}
+
+
+
 
 // Hide all administrators from user list.
 
@@ -174,6 +188,8 @@ function isa_pre_user_query($user_search) {
 
 	}
 }
+
+
 
 
 /**
